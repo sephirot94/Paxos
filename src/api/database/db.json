@@ -1,0 +1,9 @@
+
+[
+  {
+    "id_transaction" : "1",
+    "type": "credit",
+    "ammount": 10000.00,
+    "date": "2020-04-01 00:30:00"
+  }
+]
