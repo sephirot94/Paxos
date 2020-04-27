@@ -1,9 +1,9 @@
 # Dear colleagues,
 
-#### This is the documentation for the API developed for the technical exam.
+#### This is the documentation for the API developed for the technical challenge.
 
-##### Please note that due to not using a database for this exercise, ID of transaction is not an autoincrement PK, but a rand generated number.
-##### I decided not to validate against creation of this random number due to short ammount of time for completion.
+##### Please note that due to not using a database for this exercise, ID of transaction is not an autoincrement PK, but a random generated number.
+##### I decided not to validate against creation of this random number due to short ammount of time of completion.
 ##### In reality, i would choose a different approach (using a database that already solves PK generation and read/write Locks)
 # Important 
 ## Database: 
