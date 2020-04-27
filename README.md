@@ -10,8 +10,7 @@
 ##### Since persistence was not required, i took the liberty to create a .json file (named db.json) inside the path /src/api/database. 
 ##### This file will act as a DB to store transactions.
 
-<<<<<<< HEAD
-##### Time of completion was : 2 Hours.
+##### Time of completion was 2 Hours.
 
 ## /pkg
 ##### In this folder you will find the binary file (compiled) named api_V1
@@ -19,10 +18,7 @@
 ##### Auxiliary DB file was stored in folder and the value of the path in /src/api/database/handler.go should be changed to the path where the file will be stored.
 ##### Due to low ammount of time to solve this challenge a lot of things could not be done properly. I apologize in advance.
 
-##API documentation:
-=======
 ## API documentation:
->>>>>>> b8eb01023281c5e4c97d20e9f31bd6e1991f8a2f
 
 ### application folder:
 
