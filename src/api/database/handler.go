@@ -28,7 +28,7 @@ func NewDbHandler() DbInterface {
 
 func (h DbHandler) ReadFile() ([]byte, error) {
 	// Check if file exists
-	_, err := os.Stat("db.json")
+	_, err := os.Stat("/Users/ijinkus/go/src/paxos/src/api/database/db.txt")
 	if err != nil {
 		if os.IsNotExist(err) {
 			log.Fatal("File does not exist.")
@@ -38,7 +38,7 @@ func (h DbHandler) ReadFile() ([]byte, error) {
 	// Wait for pending write operations
 	h.WaitGroup.Wait()
 
-	data, err := ioutil.ReadFile("db.json")
+	data, err := ioutil.ReadFile("/Users/ijinkus/go/src/paxos/src/api/database/db.txt")
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -49,7 +49,7 @@ func (h DbHandler) ReadFile() ([]byte, error) {
 
 func (h DbHandler) WriteFile(data []byte) error {
 	// Check if file exists
-	_, err := os.Stat("db.json")
+	_, err := os.Stat("/Users/ijinkus/go/src/paxos/src/api/database/db.txt")
 	if err != nil {
 		if os.IsNotExist(err) {
 			log.Fatal("File does not exist.")
@@ -66,7 +66,7 @@ func (h DbHandler) WriteFile(data []byte) error {
 	h.WaitGroup.Add(1)
 
 	// Write file
-	err = ioutil.WriteFile("test.txt", data, 0666)
+	err = ioutil.WriteFile("/Users/ijinkus/go/src/paxos/src/api/database/db.txt", data, 0666)
 	if err != nil {
 		// If error unlock mutex and notify wg
 		log.Fatal(err)
