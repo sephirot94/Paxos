@@ -1,11 +1,11 @@
 package controllers
 
 import (
+	"Paxos/src/api/models"
+	"Paxos/src/api/services"
 	"github.com/gin-gonic/gin"
-	"paxos/src/api/models"
 	"log"
 	"net/http"
-	"paxos/src/api/services"
 )
 
 type RestHandler struct {
@@ -27,15 +27,7 @@ func (controller RestHandler) GetAccountBalance(c *gin.Context) {
 
 func (controller RestHandler) GetTransactionHistory(c *gin.Context) {
 	c.Header("Content-type", "application/json")
-	history, err := controller.service.GetHistory()
-
-	if err != nil {
-		log.Fatal(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "There was an error getting history from storage"})
-		return
-	}
-
-
+	history:= controller.service.GetHistory()
 
 	c.JSON(http.StatusOK, history)
 	return

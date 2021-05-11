@@ -2,8 +2,8 @@ package test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"paxos/src/api/models"
-	"paxos/src/api/services"
+	"Paxos/src/api/models"
+	"Paxos/src/api/services"
 	"testing"
 )
 

@@ -1,8 +1,8 @@
 package main
 
-import(
+import (
+	"Paxos/src/api/application"
 	"github.com/gin-gonic/gin"
-	"paxos/src/api/application"
 )
 
 var (

@@ -1,19 +1,17 @@
 package services
 
 import (
-	"encoding/json"
+	"Paxos/src/api/database"
+	"Paxos/src/api/models"
 	"errors"
-	"log"
 	"math/rand"
-	"paxos/src/api/database"
-	"paxos/src/api/models"
 	"strconv"
 	"time"
 )
 
 type ServiceProviderInterface interface {
 	GetAccountBalance() models.AccountBalance
-	GetHistory() ([]models.Transaction, error)
+	GetHistory() []models.Transaction
 	GetTransaction(id string) (*models.Transaction, error)
 	ExecuteTransaction(transaction *models.TransactionBody) error
 }
@@ -25,8 +23,6 @@ type ServiceProvider struct {
 
 	// Since no db is used, we emulate db as follows
 	dbHandler database.DbInterface
-	Balance float64
-
 }
 
 // INSTANCE SERVICE PROVIDER
@@ -34,51 +30,27 @@ type ServiceProvider struct {
 func NewServiceProvider() ServiceProviderInterface {
 	return ServiceProvider{
 		dbHandler: database.NewDbHandler(),
-		Balance: 0,
 	}
 }
 
 func (service ServiceProvider) GetAccountBalance() models.AccountBalance {
-	response := models.AccountBalance{
-		Balance: service.Balance,
-	}
-	return response
-}
-func (service ServiceProvider) GetHistory() ([]models.Transaction, error) {
-	var response []models.Transaction
-	data, err := service.dbHandler.ReadFile()
-	if err != nil {
-		log.Fatal(err)
-		return nil, err
-	}
-
-	errMarshal := json.Unmarshal(data, &response)
-	if errMarshal != nil {
-		log.Fatal(errMarshal)
-		return nil, errMarshal
-	}
-
-	return response, nil
+	data := service.dbHandler.GetData()
+	return data.Balance
 }
 
-func (service ServiceProvider) GetTransaction(id string) (*models.Transaction, error) {
-	var transactionHistory []models.Transaction
+func (service ServiceProvider) GetHistory() []models.Transaction {
+	data := service.dbHandler.GetData()
 
-	data, err := service.dbHandler.ReadFile()
-	if err != nil {
-		log.Fatal(err)
-		return nil, err
-	}
+	return data.History
+}
 
-	errMarshal := json.Unmarshal(data, &transactionHistory)
-	if errMarshal != nil {
-		log.Fatal(errMarshal)
-		return nil, errMarshal
-	}
+func (service ServiceProvider) GetTransaction(id string) (*models.Transaction,error) {
 
-	for key,element := range transactionHistory {
+	data := service.dbHandler.GetData()
+
+	for key,element := range data.History {
 		if element.ID == id {
-			return &transactionHistory[key], nil
+			return &data.History[key], nil
 		}
 	}
 
@@ -87,27 +59,24 @@ func (service ServiceProvider) GetTransaction(id string) (*models.Transaction, e
 }
 
 func (service ServiceProvider) ExecuteTransaction(transaction *models.TransactionBody) error {
+	data := service.dbHandler.GetData()
 	switch transaction.Type {
 	case "debit":
-		result := service.Balance - transaction.Ammount
+		result := data.Balance.Balance - transaction.Ammount
 
 		if result < 0 {
 			return errors.New("invalid transaction: not enough money")
 		}
 
-		service.Balance = result
-
 	case "credit":
-		result := service.Balance + transaction.Ammount
 
-		service.Balance = result
 	default:
 		return errors.New("incorrect transaction type")
 	}
 
 	dateStamp := time.Now()
 
-	transactionToWrite := models.Transaction{
+	newTransaction := models.Transaction{
 		// Random INT is not recommended because cannot ensure PK standards. Perfect solution for this would be transactional DB usage
 		ID:      strconv.Itoa(rand.Int()),
 		Type:    transaction.Type,
@@ -115,19 +84,7 @@ func (service ServiceProvider) ExecuteTransaction(transaction *models.Transactio
 		Date:    dateStamp.String(),
 	}
 
-	// Convert transaction to []byte
-	data, err := json.Marshal(&transactionToWrite)
-	if err != nil {
-		log.Fatal(err)
-		return  err
-	}
-
-	// Write new transaction in file (aux db)
-	err = service.dbHandler.WriteFile(data)
-	if err != nil {
-		log.Fatal(err)
-		return  err
-	}
+	service.dbHandler.SetData(newTransaction)
 
 	return nil
 }

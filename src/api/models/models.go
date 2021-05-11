@@ -23,3 +23,8 @@ type TransactionBody struct {
 type AccountBalance struct {
 	Balance float64 `json:"balance"`
 }
+
+type DB struct {
+	Balance AccountBalance
+	History []Transaction
+}

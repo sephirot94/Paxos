@@ -1,7 +1,7 @@
 package application
 
 import (
-	"paxos/src/api/controllers"
+	"Paxos/src/api/controllers"
 
 )
 
