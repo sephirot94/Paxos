@@ -23,6 +23,7 @@ func (controller RestHandler) GetAccountBalance(c *gin.Context) {
 	balance := controller.service.GetAccountBalance()
 
 	c.JSON(http.StatusOK, balance)
+	return
 }
 
 func (controller RestHandler) GetTransactionHistory(c *gin.Context) {
@@ -37,24 +38,18 @@ func (controller RestHandler) GetTransaction(c *gin.Context) {
 	c.Header("Content-type", "application/json")
 	id := c.Param("id")
 
-	// I am assuming that ID, since it is a string, could not only be numeric. If assumption is incorrect, would check if id is not a number with following commented code
-
-	//if _, err := strconv.Atoi(v); err == nil {
-	//	response should be 400 Bad request
-	//}
-
 	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid transaction ID"})
+		return
 	}
 
 	transaction, err := controller.service.GetTransaction(id)
 
 	if err != nil {
 		if err.Error() == "transaction not found" {
-			log.Println("Error : Transaction not found")
 			c.JSON(http.StatusNotFound, gin.H{"message": "Transaction not found"})
+			return
 		}
-		log.Fatal(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "There was an error getting history from storage"})
 		return
 	}
@@ -76,16 +71,14 @@ func (controller RestHandler) ExecTransaction(c *gin.Context) {
 
 	if transaction != nil {
 		if transaction.Error() == "invalid transaction: not enough money" {
-			log.Println("invalid transaction: not enough money")
 			c.JSON(http.StatusConflict, gin.H{"message": "invalid transaction: not enough money"})
 			return
 		}
 		if transaction.Error() == "incorrect transaction type" {
-			log.Println("incorrect transaction type")
 			c.JSON(http.StatusBadRequest, gin.H{"message": "incorrect transaction type"})
 			return
 		}
-		log.Fatal("There was an unknown server error executing transaction")
+		log.Fatal("There was an unknown server error executing transaction: ", transaction.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "There was an error when executing transaction"})
 		return
 	}
