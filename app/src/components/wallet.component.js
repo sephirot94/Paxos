@@ -60,12 +60,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Wallet() {
   const classes = useStyles();
-  let history = useHistory();
   
   const [montoPagar, setMontoPagar] = useState(0);
   const [montoCobrar, setMontoCobrar] = useState(0);
   const [saldo, setSaldo] = useState();
-  const [error, setError] = useState();
+  const [status, setStatus] = useState();
 
   function pagarRequest(){
     const data = {
@@ -79,28 +78,41 @@ export default function Wallet() {
     })
       .then(res => res.json())
       .then(res => {
-        
+        setStatus(res.message)
+        setMontoPagar(0);
+        obtenerSaldoRequest();
       })
   }
 
   function cobrarRequest(){
     const data = {
-      type: 'debit',
+      type: 'credit',
       ammount: montoPagar
     }
-    fetch("http://localhost:5000/api/login", {
+    fetch("http://localhost:8080/transactions", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
       .then(res => res.json())
+      .then(res => {
+        setStatus(res.message)
+        setMontoCobrar(0);
+        obtenerSaldoRequest();
+      })
   }
 
-  useEffect(()=>{
-    // if(loginData.isSuccess){
-    //   history.push("/profile", {userData:loginData.data});
-    // }
-  });
+  function obtenerSaldoRequest(){
+    fetch("http://localhost:8080/account")
+      .then(res => res.json())
+      .then(res => {
+        setSaldo(res.balance)
+      })
+  }
+
+  useEffect(() => {
+    obtenerSaldoRequest();
+  }, [])
 
   return (
     <Container component="main" maxWidth="xs">
@@ -114,8 +126,8 @@ export default function Wallet() {
               margin="normal"
               fullWidth
               id="debit"
-              label="Monto"
               name="pago"
+              value={montoPagar}
               autoFocus
               onChange={(event) => {
                 const { value } = event.target;
@@ -141,8 +153,8 @@ export default function Wallet() {
               margin="normal"
               fullWidth
               id="credit"
-              label="Monto"
               name="credit"
+              value={montoCobrar}
               autoFocus
               onChange={(event) => {
                 const { value } = event.target;
@@ -186,7 +198,7 @@ export default function Wallet() {
               />
           </Grid>
         </Grid>
-        {error ? <Alert severity="error">error</Alert> : null}
+        {status ? <Alert severity="info">{status}</Alert> : null}
       </div>
       <Box mt={8}>
         <Copyright />
