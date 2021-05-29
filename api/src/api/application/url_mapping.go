@@ -1,11 +1,15 @@
 package application
 
 import (
+	"Paxos/src/api/controllers/middlewares"
 	"net/http"
 	"github.com/gin-gonic/gin"
 )
 
 func MapURLs(app *Application, Router *gin.Engine) {
+
+	Router.Use(middlewares.CORSMiddleware())
+
 
 	// Add health check
 	Router.GET("/ping", func(c *gin.Context) {
