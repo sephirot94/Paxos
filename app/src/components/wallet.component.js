@@ -71,6 +71,7 @@ export default function Wallet() {
       type: 'debit',
       ammount: montoPagar
     }
+    debugger;
     fetch("http://localhost:8080/transactions", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -87,7 +88,7 @@ export default function Wallet() {
   function cobrarRequest(){
     const data = {
       type: 'credit',
-      ammount: montoPagar
+      ammount: montoCobrar
     }
     fetch("http://localhost:8080/transactions", {
       method: 'POST',
@@ -129,9 +130,11 @@ export default function Wallet() {
               name="pago"
               value={montoPagar}
               autoFocus
+              type="number"
               onChange={(event) => {
+                debugger;
                 const { value } = event.target;
-                setMontoPagar(value);
+                setMontoPagar(parseFloat(value));
               }}
               className={classes.input}
             />
@@ -156,9 +159,10 @@ export default function Wallet() {
               name="credit"
               value={montoCobrar}
               autoFocus
+              type="number"
               onChange={(event) => {
                 const { value } = event.target;
-                setMontoCobrar(value);
+                setMontoCobrar(parseFloat(value));
               }}
               className={classes.input}
             />
