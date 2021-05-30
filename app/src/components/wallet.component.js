@@ -9,7 +9,6 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { useHistory } from 'react-router-dom';
 import Alert from '@material-ui/lab/Alert';
 import { InputLabel } from '@material-ui/core';
 
@@ -71,7 +70,6 @@ export default function Wallet() {
       type: 'debit',
       ammount: montoPagar
     }
-    debugger;
     fetch("http://localhost:8080/transactions", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -132,7 +130,6 @@ export default function Wallet() {
               autoFocus
               type="number"
               onChange={(event) => {
-                debugger;
                 const { value } = event.target;
                 setMontoPagar(parseFloat(value));
               }}
